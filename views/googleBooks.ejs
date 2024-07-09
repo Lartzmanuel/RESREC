@@ -1,0 +1,29 @@
+<nav class="resource__nav">
+    <ul>
+        <li><a href="/youtube">YOUTUBE</a></li>
+        <li><a href="/udemy">UDEMY COURSES</a></li>
+        <li><a href="/googleBooks">GOOGLE BOOKS</a></li>
+    </ul>
+</nav>
+
+<div class="home-topic">RECOMMENDED FOR YOU</div>
+
+<div class="grid-container">
+    <% if(booksData.length) { %>
+        <% for(let data of booksData) { %>
+             <a href="<%= data.Link %>" target="_blank">
+               <div class="card">
+        <div class="img-container"><img src=" <%= data.BookCover %> " alt=""></div>
+        <div class="card-content">
+            <h2><%= data.Title %></h2>
+            <p><%= data.Author %></p>
+        </div>
+    </div>     
+             </a>
+           
+      <% } %>
+    <% } else { %>
+    <div>{% empty %}</div>
+    <% } %> 
+</div>
+

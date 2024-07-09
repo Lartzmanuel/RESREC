@@ -1,0 +1,39 @@
+
+<div class="wrapper-main">
+    <div class="wrapper">
+        <form class="preference" action="/submit" id="preference" method="POST">
+            <h1>RESOURCE RECOMMENDER</h1>
+            <h4>PLEASE COMPLETE THE FORM TO GET SOME TOP RESOURCES</h4>
+
+            <div class="container-pref">
+                <div class="interest">
+                    <select name="interest" id="interest" class="interest-type" required>
+                        <option value="" disabled selected >CHOOSE CATEGORY</option>
+                        <option value="Information Technology" >Information Technology</option>
+                        <option value="Business">Business</option>
+                        <option value="Science">Science</option>
+                        <option value="Fiction">Fiction</option>
+                        <option value="Health">Health</option>
+                        <option value="Science">Science</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="resourceType">
+                    <select name="resourceType" id="resourceType" class="resource-type" required>
+                        <option value="" disabled selected >CHOOSE RESOURCE TYPE </option>
+                        <option value="Youtube Videos" >Youtube Videos</option>
+                        <option value="Udemy Courses">Udemy Courses</option>
+                        <option value="Google Books">Google Books</option>
+                    </select>
+                </div>
+                <div class="topic">
+                    <input type="text" maxlength="50" name="Topic" class="topic" id="topic" placeholder="ENTER TOPIC" required>
+                </div>
+                <div>
+                    <button class="btn" type="submit">GET RESOURCES</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

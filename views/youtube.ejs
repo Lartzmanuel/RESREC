@@ -1,0 +1,29 @@
+<nav class="resource__nav">
+    <ul>
+        <li><a href="/youtube">YOUTUBE</a></li>
+        <li><a href="/udemy">UDEMY COURSES</a></li>
+        <li><a href="/googleBooks">GOOGLE BOOKS</a></li>
+    </ul>
+</nav>
+
+<div class="home-topic">RECOMMENDED FOR YOU</div>
+
+<div class="grid-container">
+    <% if(youtubeData.length) { %>
+        <% for(let data of youtubeData) { %>
+             <a href="<%= data.VideoLink %>" target="_blank">
+               <div class="card">
+        <div class="img-container"><img src=" <%= data.Picture %> " alt=""></div>
+        <div class="card-content">
+            <h2><%= data.Title %></h2>
+            <p> <%= data.Author %></p>
+        </div>
+    </div>     
+             </a>
+           
+      <% } %>
+    <% } else { %>
+    <div>{% empty %}</div>
+    <% } %> 
+</div>
+

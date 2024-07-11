@@ -120,6 +120,28 @@ router.post('/submit', (req, res) => {
   
     res.redirect(redirectUrl);
   });
+
+  //route to get recommendations
+//   router.get('/recommendations', async (req, res) => {
+//     try {
+//         const topic = req.query.topic;
+        
+//         const udemyCourses = await getUdemyCourse(topic);
+//         const youtubeVideos = await getYoutubeVideo(topic);
+//         const googleBooks = await getGoogleBooks(topic);
+
+//         res.render('recommendations', {
+//             title: 'Recommendations',
+//             description: `Recommendations for ${topic}`,
+//             udemyCourses,
+//             youtubeVideos,
+//             googleBooks
+//         });
+//     } catch (error) {
+//         console.error('Error fetching recommendations:', error);
+//         res.status(500).send('Internal Server Error');
+//     }
+// });
   
 
 module.exports = router;

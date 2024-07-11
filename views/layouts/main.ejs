@@ -10,12 +10,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;400;600;800;900&display=swap" rel="stylesheet">
-    <script type="text/javascript" defer src="/js/script.js"></script>
-    <script type="text/javascript" defer src="/js/recommender.js"></script>
+    <% if (locals.isLoginPage && locals.isRegisterPage) { %>
+        <script type="text/javascript" defer src="/js/script.js"></script>
+    <% } %>
+    <!-- <script type="text/javascript" defer src="/js/recommender.js"></script> -->
 </head>
 <body>
   
-    <% if (!locals.isPreferencePage && !locals.isloginPage) { %>
+    <% if (!locals.isPreferencePage && !locals.isloginPage && !locals.isRegisterPage) { %>
         <%- include('../partials/header.ejs') %>
     <% } %>
     
@@ -23,9 +25,10 @@
         <%- body %>
     </main>
     
-    <% if (!locals.isPreferencePage && !locals.isloginPage) { %>
+    <% if (!locals.isPreferencePage && !locals.isloginPage && !locals.isRegisterPage) { %>
         <%- include('../partials/footer.ejs') %>
     <% } %>
+    
     
 </body>
 </html>

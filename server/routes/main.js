@@ -23,31 +23,6 @@ router.get('/preference', (req, res) => {
     res.render('preference', {locals})
 })
 
-router.get('/Register', (req, res) => {
-    const locals = {
-        title: "Register",
-        description: "Register page"
-    }
-    res.render('register', {locals})
-})
-
-router.get('/login', (req, res)=> {
-    const locals = {
-        title: "login",
-        description: "login page",
-        isloginPage: true
-    }
-    res.render('login', {locals})
-})
-
-router.get('/welcome', (req, res)=> {
-    const locals = {
-        title: "Welcome",
-        description: "Welcome page"
-    }
-    res.render('welcome', {locals})
-})
-
 router.get('/about', (req, res)=> {
     const locals = {
         title: "About",
@@ -120,28 +95,5 @@ router.post('/submit', (req, res) => {
   
     res.redirect(redirectUrl);
   });
-
-  //route to get recommendations
-//   router.get('/recommendations', async (req, res) => {
-//     try {
-//         const topic = req.query.topic;
-        
-//         const udemyCourses = await getUdemyCourse(topic);
-//         const youtubeVideos = await getYoutubeVideo(topic);
-//         const googleBooks = await getGoogleBooks(topic);
-
-//         res.render('recommendations', {
-//             title: 'Recommendations',
-//             description: `Recommendations for ${topic}`,
-//             udemyCourses,
-//             youtubeVideos,
-//             googleBooks
-//         });
-//     } catch (error) {
-//         console.error('Error fetching recommendations:', error);
-//         res.status(500).send('Internal Server Error');
-//     }
-// });
-  
 
 module.exports = router;

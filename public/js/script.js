@@ -69,3 +69,36 @@
         close.style.display = 'none'; // Hide the close icon
         bar.style.display = 'block'; // Show the hamburger icon
     });
+
+    const myModal = document.getElementById('myModal')
+    const logoutBtn = document.querySelectorAll('.logout');
+    const closebtn = document.getElementById('closebtn')
+    const yesBtn = document.getElementById('yesBtn')
+    const noBtn = document.getElementById('noBtn')
+
+
+    logoutBtn.forEach(logout => {
+        logout.addEventListener('click', (event)=> {
+            // event.preventDefault();
+            myModal.style.display = 'block';
+        })
+    })
+
+    //function that closes the modal
+    function closeModal() {
+        myModal.style.display = 'none'
+    }
+
+    closebtn.addEventListener('click', closeModal)
+    noBtn.addEventListener('click', closeModal)
+
+    window.onclick = (event) => {
+        if(event.target == myModal){
+            closeModal();
+        }
+    }
+
+    yesBtn.addEventListener('click',() => {
+        window.location.href = '/login';
+        closeModal();
+    })

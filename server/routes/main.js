@@ -3,8 +3,11 @@ const express = require('express')
 const router = express.Router()
 const session = require('express-session');
 const {getUdemyCourse, getYoutubeVideo, getGoogleBooks} = require('../../public/js/recommender');
-//const getResource = require('../../public/js/script');
+// const {checkAuthenticated} = require('../../app')
+// console.log("checkAuthenticated imported:", checkAuthenticated);
+
 const bodyParser = require('body-parser');
+const User = require('../../model/users');
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.use(session({
@@ -38,6 +41,47 @@ router.get('/home', (req, res)=> {
     }
     res.render('home', {locals})
 })
+
+router.get('/userProfile', (req, res)=> {
+    const locals = {
+        title: "User Profile",
+        description: "User Profile"
+    }
+    res.render('userProfile', {locals, user: req.user})
+})
+
+function checkAuthenticated(req, res, next){
+    if(req.isAuthenticated()){
+        return next()
+    }
+    res.redirect('/login')
+}
+
+router.get('/editProfile', checkAuthenticated, (req, res) => {
+    const locals = {
+        title: "Edit Profile",
+        description: "Edit Profile Page"
+    }
+    res.render('editProfile', {locals, user: req.user})
+})
+
+
+router.post('/editProfile', checkAuthenticated, async (req, res) => {
+    try {
+        const { bio, interests } = req.body;
+        const user = await User.findById(req.user._id);
+        user.bio = bio;
+        user.interests = interests;
+        
+        await user.save();
+        res.redirect('/userProfile')
+
+    } catch (err) {
+        console.error(err)
+        res.redirect('/editProfile')
+    }
+})
+
 
 router.get('/youtube', async (req, res)=> {
   const topic = req.session.topic;

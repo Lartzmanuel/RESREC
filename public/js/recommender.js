@@ -124,7 +124,7 @@ const youtubeData = [];
     const views = video.statistics.viewCount;
     const picture = video.snippet.thumbnails.high.url;
     const videoLink = `https://www.youtube.com/watch?v=${video.id}`
-    const description = video.snippet.description;
+   // const description = video.snippet.description;
     const duration = parseDuration(video.contentDetails.duration);
     const author = video.snippet.channelTitle;
 
@@ -134,7 +134,7 @@ const youtubeData = [];
       Views: views,
       Duration: duration,
       VideoLink: videoLink,
-      Description: description,
+     // Description: description,
       Picture: picture,
       Author: author,
      // CourseLink: courseLink,
@@ -145,7 +145,7 @@ const youtubeData = [];
     console.log(`Views: ${views}`);
     console.log(`Picture: ${picture}`);
     console.log(`Duration: ${duration}`);
-    console.log(`Description: ${description}`);
+  //console.log(`Description: ${description}`);
     console.log(`Author: ${author}`);
     console.log('-------------------------------------------');
   });

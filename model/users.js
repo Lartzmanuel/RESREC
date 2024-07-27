@@ -16,7 +16,18 @@ const userSchema = new mongoose.Schema({
     searchHistory: [{
         type: String,
     }],
-    resourceHistory: []
+    resourceHistory: {
+        type: [String],
+        default: []
+    },
+    bio: {
+        type: String,
+        default: ''
+    },
+    interests: {
+        type: [String],
+        default: []
+    }
 })
 
 const User = mongoose.model('User', userSchema)

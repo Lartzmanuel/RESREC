@@ -47,12 +47,13 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride('_method'))
 
-app.get('/', checkAuthenticated, (req, res) => {
-    res.render('index', {name: req.user.name})
-})
-
 app.get('/login', checkNotAuthenticated, (req, res) => {
-    res.render('login')
+    const locals = {
+        title: "Login",
+        description: "Login page",
+        isLoginPage: true
+    }
+    res.render('login', {locals})
 })
 
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
@@ -62,7 +63,12 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 }))
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
-    res.render('register.ejs')
+    const locals = {
+        title: "Register",
+        description: "Register page",
+        isRegisterPage: true
+    }
+    res.render('register', {locals})
 })
 
 app.post('/register', checkNotAuthenticated, async (req, res) => {
@@ -179,3 +185,4 @@ app.use('/', mainRoutes);
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`)
 })
+

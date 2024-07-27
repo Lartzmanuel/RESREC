@@ -16,9 +16,11 @@
         <script type="text/javascript" defer src="/js/script.js"></script>
     <% } %>
     <!-- <script type="text/javascript" defer src="/js/recommender.js"></script> -->
+    <script type="text/javascript" defer src="/js/script.js"></script>
 </head>
 <body>
-    <% if (!locals.isPreferencePage && !locals.isloginPage && !locals.isRegisterPage) { %>
+  
+    <% if (!locals.isPreferencePage && !locals.isLoginPage && !locals.isRegisterPage) { %>
         <%- include('../partials/header.ejs') %>
     <% } %>
     
@@ -26,7 +28,7 @@
         <%- body %>
     </main>
     
-    <% if (!locals.isPreferencePage && !locals.isloginPage && !locals.isRegisterPage) { %>
+    <% if (!locals.isPreferencePage && !locals.isLoginPage && !locals.isRegisterPage) { %>
         <%- include('../partials/footer.ejs') %>
     <% } %>
     

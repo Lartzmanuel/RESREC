@@ -11,10 +11,10 @@
 <div class="grid-container">
     <% if(udemyCourseData.length) { %>
         <% for(let data of udemyCourseData) { %>
-             <a href="<%= data.CourseLink %>" target="_blank">
-               <div class="card">
-        <div class="img-container"><img src=" <%= data.CoursePicture %> " alt=""></div>
-        <div class="card-content">
+        <a class="res-link" href="<%= data.CourseLink %>" target="_blank" onclick="handleResourceClick(event, { title: '<%= data.Title %>', link: '<%= data.CourseLink %>', image: '<%= data.CoursePicture %>', description: '<%= data.Description %>'})">
+                <div class="card">
+            <div class="img-container"><img src=" <%= data.CoursePicture %> " alt=""></div>
+            <div class="card-content">
             <h2><%= data.Title %></h2>
             <p><%= data.Description %></p>
         </div>

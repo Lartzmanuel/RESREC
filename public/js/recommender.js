@@ -22,22 +22,25 @@ async function getUdemyCourse (topic) {
     };
     const params = {
       search: topic,
-      limit: 15,
+      page:1,
+      page_size: 100,
     };
 
     const response = await axios.get(url, { headers, params });
 
     if (response.status === 200) {
       const data = response.data;
+      console.log(data);
       const courseData = [];
 
       console.log('----- Udemy Courses -----');
-      data.results.slice(0, 15).forEach((course) => {
+      data.results.slice(0, 16).forEach((course) => {
         const title = course.title;
         const description = course.headline;
         const coursePicture = course.image_240x135;
         const author = course.visible_instructors[0].title;
         const courseLink = "https://www.udemy.com"+course.url;
+        
         let price = course.price;
 
         if (!price || price === "") {
@@ -87,6 +90,12 @@ function parseDuration(duration) {
   return `${h}h ${m}m ${s}s`;
 }
 
+function truncateDescription(description, maxLength = 200) {
+  if (description.length <= maxLength) {
+      return description;
+  }
+  return description.slice(0, maxLength) + '...';
+}
 
 // Getting youtube videos 
 async function getYoutubeVideo (topic){
@@ -124,7 +133,7 @@ const youtubeData = [];
     const views = video.statistics.viewCount;
     const picture = video.snippet.thumbnails.high.url;
     const videoLink = `https://www.youtube.com/watch?v=${video.id}`
-   // const description = video.snippet.description;
+   const description = truncateDescription(video.snippet.description);
     const duration = parseDuration(video.contentDetails.duration);
     const author = video.snippet.channelTitle;
 
@@ -134,7 +143,7 @@ const youtubeData = [];
       Views: views,
       Duration: duration,
       VideoLink: videoLink,
-     // Description: description,
+     Description: description,
       Picture: picture,
       Author: author,
      // CourseLink: courseLink,
@@ -145,7 +154,7 @@ const youtubeData = [];
     console.log(`Views: ${views}`);
     console.log(`Picture: ${picture}`);
     console.log(`Duration: ${duration}`);
-  //console.log(`Description: ${description}`);
+    console.log(`Description: ${description}`);
     console.log(`Author: ${author}`);
     console.log('-------------------------------------------');
   });

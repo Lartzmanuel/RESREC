@@ -12,7 +12,11 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    searchHistory: [{
+        type: String,
+    }],
+    resourceHistory: []
 })
 
 const User = mongoose.model('User', userSchema)

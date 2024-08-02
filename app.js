@@ -36,12 +36,17 @@ app.set('layout', './layouts/main')
 app.use(express.static('public'))
 app.use(express.json());
 app.use(express.urlencoded({extended: false}))
-app.use(flash())
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
 }))
+app.use(flash())
+app.use((req, res, next) => {
+  res.locals.success_msg = req.flash('success_msg');
+  res.locals.error_msg = req.flash('error_msg');
+  next();
+});
 
 app.use(passport.initialize())
 app.use(passport.session())
@@ -71,20 +76,30 @@ app.get('/register', checkNotAuthenticated, (req, res) => {
     res.render('register', {locals})
 })
 
+
 app.post('/register', checkNotAuthenticated, async (req, res) => {
     try {
+
+        const { securityQuestion, securityAnswer } = req.body;
         const hashedPassword = await bcrypt.hash(req.body.password, 10)
+        const hashedAnswer = await bcrypt.hash(securityAnswer, 10)
+
         const user = new User({
             name: req.body.name,
             email: req.body.email,
-            password: hashedPassword
+            password: hashedPassword, securityQuestion,
+            securityAnswer: hashedAnswer,
         });
+
         await user.save();
+        console.log(user)
+
         res.redirect('/login')
-    } catch {
-        res.redirect('/register')
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send('Server Error')
     }
-    console.log(await User.find()); //log all users in the database
 })
 
 
@@ -167,15 +182,6 @@ function checkNotAuthenticated(req, res, next){
     }
     next()
 }
-
-app.delete('/logout', (req, res, next) => {
-    req.logout((err) => {
-        if (err) {
-            return next(err);
-        }
-        res.redirect('/login');
-    });
-});
 
 
 // Importing and using routes from main.js

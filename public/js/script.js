@@ -71,37 +71,38 @@
     });
 
    // To load resources
-async function loadResources() {
-  try {
-    const response = await fetch('/udemy');
-    const data = await response.json();
-    // Handle the data, e.g., display resources
-  } catch (error) {
-    console.error('Failed to load resources:', error);
-  }
-}
-
-// To handle a resource click
-async function handleResourceClick(event,resource) {
-  event.preventDefault()
-  try {
-    console.log(resource);
-    const response = await fetch('/click-resource', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...resource }),
-    });
-    console.log(response);
-    const data = await response.json();
-    if (response.ok) {
-      window.open(resource.link, '_blank');
-    } else {
-      console.error('Failed to handle resource click:', data.error);
+    async function loadResources() {
+        try {
+            const response = await fetch('/udemy');
+            const data = await response.json();
+            // Handle the data, e.g., display resources
+        } catch (error) {
+            console.error('Failed to load resources:', error);
+        }
     }
-  } catch (error) {
-    console.error('Failed to handle resource click:', error);
-  }
-}
+
+    // To handle a resource click
+    async function handleResourceClick(event,resource) {
+    event.preventDefault()
+        try {
+            console.log(resource);
+            const response = await fetch('/click-resource', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...resource }),
+            });
+            console.log(response);
+            const data = await response.json();
+            if (response.ok) {
+            window.open(resource.link, '_blank');
+            } else {
+            console.error('Failed to handle resource click:', data.error);
+            }
+        } catch (error) {
+            console.error('Failed to handle resource click:', error);
+        }
+    }
+
     const myModal = document.getElementById('myModal')
     const logoutBtn = document.querySelectorAll('.logout');
     const closebtn = document.getElementById('closebtn')
@@ -130,7 +131,25 @@ async function handleResourceClick(event,resource) {
         }
     }
 
-    yesBtn.addEventListener('click',() => {
-        window.location.href = '/login';
-        closeModal();
-    })
+
+
+    yesBtn.addEventListener('click', async (event) => {
+      event.preventDefault();
+      
+      try {
+          const response = await fetch('/logout', {
+              method: 'POST',
+          });
+  
+          if (response.ok) {
+              window.location.href = '/login';
+          } else {
+              console.error('Logout failed');
+          }
+      } catch (error) {
+          console.error('Error during logout:', error);
+      }
+  
+      closeModal();
+  });
+

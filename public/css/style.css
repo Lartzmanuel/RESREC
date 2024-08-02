@@ -147,13 +147,13 @@ body {
     width: 100%;
 }
 select{
-    width: 100%;
-    padding: 0.7rem;
-    border-radius: 8px;
+    margin-bottom: 8px;
 }
-input, textarea{
+
+input, textarea, select{
+  font-family: 'Poppins', sans-serif;
     padding: 0.7rem;
-    border-radius: 6px;
+    border-radius: 4px;
     width: 100%;
     border-width: 1px;
 }
@@ -453,8 +453,8 @@ color: #fff;
     font-family: 'Poppins', sans-serif;
   }
 
-    .input-container:not(:first-child){
-      margin-top: 15px;
+     .input-container:not(:first-child){
+      margin-top: 10px;
     }
 
   .align-center {
@@ -505,6 +505,11 @@ color: #fff;
 
   .error-msg {
     color: red;
+    margin-bottom: 10px;
+  }
+
+  .success-msg {
+    color: rgb(28, 224, 28);
     margin-bottom: 10px;
   }
 
@@ -646,17 +651,6 @@ color: #fff;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.4);
 }
-
-/* .modal {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-} */
 
 .modal-content {
   margin: 15% auto;
@@ -907,4 +901,23 @@ color: #fff;
 
 .name-wrap input {
   padding: 10px;
+}
+
+/* PASSWORD RESET PAGE */
+.pswd-reset-wrapper {
+  padding: 0px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.pswd-reset-container {
+  max-width: 650px;
+}
+
+.pswd-reset-btn {
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 20px;
 }

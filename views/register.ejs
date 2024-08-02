@@ -3,20 +3,32 @@
         <form id="registerForm" class="welcome-form" action="/register" method="POST">
             <div class="welcome-content">
                     <h1>REGISTER</h1>
-                    <div class="input-container">
+                    <div class="register-input-container">
                         <label for="register-name">Name</label>
                         <input type="text" name="name" id="register-name"  placeholder="Enter your name" required>
                         <p id="name-error"></p>
                     </div>
-                    <div class="input-container">
+                    <div class="register-input-container">
                         <label for="register-email">Email</label>
                         <input type="email" name="email" id="register-email"  placeholder="Enter your email" required>
                         <p id="email-error"></p>
                     </div>
-                    <div class="input-container">
+                    <div class="register-input-container">
                         <label for="register-password">Password</label>
                         <input type="password" name="password" id="register-password"  placeholder="Enter your password" required>
                         <p id="password-error"></p>
+                    </div>
+                    <div class="register-input-container">
+                        <label for="securityQuestion">Security Question</label>
+                        <select name="securityQuestion" id="securityQuestion" required>
+                            <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                            <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+                            <option value="What was the name of your first school?">What was the name of your first school?</option>
+                        </select>
+                    </div>
+                    <div class="register-input-container">
+                        <label for="securityAnswer">Answer</label>
+                        <input type="text" name="securityAnswer" id="securityAnswer" required>
                     </div>
                     <div class="register-btn">
                         <button type="submit">

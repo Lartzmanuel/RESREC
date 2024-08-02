@@ -3,9 +3,7 @@ const express = require('express')
 const router = express.Router()
 const session = require('express-session');
 const {getUdemyCourse, getYoutubeVideo, getGoogleBooks} = require('../../public/js/recommender');
-// const {checkAuthenticated} = require('../../app')
-// console.log("checkAuthenticated imported:", checkAuthenticated);
-
+const bcrypt = require('bcrypt')
 const bodyParser = require('body-parser');
 const User = require('../../model/users');
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -41,14 +39,6 @@ router.get('/login', (req, res)=> {
         isloginPage: true,
     }
     res.render('login', {locals})
-})
-
-router.get('/welcome', (req, res)=> {
-    const locals = {
-        title: "Welcome",
-        description: "Welcome page"
-    }
-    res.render('welcome', {locals})
 })
 
 router.get('/about', (req, res)=> {
@@ -107,6 +97,57 @@ router.post('/editProfile', checkAuthenticated, async (req, res) => {
     }
 })
 
+router.post('/logout', (req, res) => {
+    req.logout((err) => {
+        if (err) {
+            return res.status(500).json({ error: 'Logout failed' });
+        }
+        res.redirect('/login');
+    });
+});
+
+router.get('/reset_password', (req, res) => {
+    const locals = {
+        title: 'Reset Password',
+        description: 'Reset Password'
+    }
+    res.render('reset_password', { locals })
+})
+
+router.post('/reset_password', async (req, res) => {
+    try {
+        const { securityQuestion, securityAnswer, newPassword } = req.body;
+        const user = await User.findOne({ securityQuestion });
+
+        if (!user) {
+            req.flash('error_msg', 'Invalid email or security question');
+            return res.redirect('/reset_password');
+        }
+
+        const isAnswerCorrect = await bcrypt.compare(securityAnswer, user.securityAnswer);
+        if (!isAnswerCorrect) {
+            req.flash('error_msg', 'Incorrect security answer');
+            return res.redirect('/reset_password');
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        await user.save();
+
+        
+
+        console.log(`Password reset successful for user: ${user.email}`); // Log to confirm password reset
+        req.flash('success_msg', 'Password reset successful. You can now log in with your new password.')
+
+        res.redirect('/login');
+
+    } catch (error) {
+
+        console.log(error)
+        req.flash('error_msg', 'Server error. Please try again later.');
+        res.redirect('/reset_password');
+    }
+});
 
 router.get('/youtube', async (req, res)=> {
   const topic = req.session.topic;

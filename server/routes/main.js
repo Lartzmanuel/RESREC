@@ -49,12 +49,15 @@ router.get('/about', (req, res)=> {
     res.render('about', {locals})
 })
 
-router.get('/home', (req, res)=> {
+router.get('/home', checkAuthenticated,async (req, res)=> {
     const locals = {
         title: "Home",
         description: "Home page"
     }
-    res.render('home', {locals})
+    const userId= req.user.id;
+    const user = await User.findById(userId).populate('resourceHistory');
+    //console.log(user.resourceHistory);
+    res.render('home', {locals, resources: user.resourceHistory})
 })
 
 router.get('/userProfile', (req, res)=> {
@@ -184,27 +187,27 @@ router.get('/udemy', async (req, res)=> {
   
 
 
-router.post('/submit', (req, res) => {
-    const topic = req.body.Topic;
-    const resourceType = req.body.resourceType;
-    req.session.topic = req.body.Topic;
-    console.log(topic);
-    req.session.resourceType = req.body.resourceType;
+// router.post('/submit', (req, res) => {
+//     const topic = req.body.Topic;
+//     const resourceType = req.body.resourceType;
+//     req.session.topic = req.body.Topic;
+//     console.log(topic);
+//     req.session.resourceType = req.body.resourceType;
   
-    let redirectUrl;
+//     let redirectUrl;
   
-    switch(resourceType) {
-      case 'Udemy Courses':
-        redirectUrl = '/udemy';
-        break;
-      case 'Youtube Videos':
-        redirectUrl = '/youtube';
-        break;
-      default:
-        redirectUrl = '/googleBooks';
-    }
+//     switch(resourceType) {
+//       case 'Udemy Courses':
+//         redirectUrl = '/udemy';
+//         break;
+//       case 'Youtube Videos':
+//         redirectUrl = '/youtube';
+//         break;
+//       default:
+//         redirectUrl = '/googleBooks';
+//     }
   
-    res.redirect(redirectUrl);
-  });
+//     res.redirect(redirectUrl);
+//   });
 
 module.exports = router;

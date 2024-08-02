@@ -70,16 +70,16 @@
         bar.style.display = 'block'; // Show the hamburger icon
     });
 
-   // To load resources
-    async function loadResources() {
-        try {
-            const response = await fetch('/udemy');
-            const data = await response.json();
-            // Handle the data, e.g., display resources
-        } catch (error) {
-            console.error('Failed to load resources:', error);
-        }
-    }
+        
+async function loadResources() {
+  try {
+    const response = await fetch('/udemy');
+    const data = await response.json();
+    // Handle the data, e.g., display resources
+  } catch (error) {
+    console.error('Failed to load resources:', error);
+  }
+} 
 
     // To handle a resource click
     async function handleResourceClick(event,resource) {

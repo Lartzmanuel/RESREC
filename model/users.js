@@ -16,10 +16,8 @@ const userSchema = new mongoose.Schema({
     searchHistory: [{
         type: String,
     }],
-    resourceHistory: {
-        type: [String],
-        default: []
-    },
+    resourceHistory: 
+        [{ type: mongoose.Schema.Types.ObjectId, ref: 'Resource' } ],
     bio: {
         type: String,
         default: ''

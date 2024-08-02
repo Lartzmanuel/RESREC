@@ -79,7 +79,7 @@ async function loadResources() {
   } catch (error) {
     console.error('Failed to load resources:', error);
   }
-}
+} 
 
 // To handle a resource click
 async function handleResourceClick(event,resource) {

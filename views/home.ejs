@@ -5,45 +5,23 @@
     </div>
 </div>
 
-
+<div class="home-topic"> HISTORY </div> 
 <div class="grid-container">
-
     
-    <div class="card">
-        <div class="img-container"><img src="/img/city1.jpg" alt=""></div>
-        <div class="card-content">
-            <h2>Card Title</h2>
-            <p>Card description 1 goes here. This is a brief description of the card content.</p>
+    <% if(resources.length) { %>
+        <% for(let data of resources) { %>
+        <a class="res-link" href="<%= data.link %>" target="_blank">
+                <div class="card">
+            <div class="img-container"><img src=" <%= data.image %> " alt=""></div>
+            <div class="card-content">
+            <h2><%= data.title %></h2>
+            <p><%= data.description %></p>
         </div>
-    </div>
-    <div class="card">
-        <div class="img-container"><img src="/img/city1.jpg" alt=""></div>
-        <div class="card-content">
-            <h2>Card Title</h2>
-            <p>Card description 1 goes here. This is a brief description of the card content.</p>
-        </div>
-    </div>
-    <div class="card">
-        <div class="img-container"><img src="/img/city1.jpg" alt=""></div>
-        <div class="card-content">
-            <h2>Card Title</h2>
-            <p>Card description 1 goes here. This is a brief description of the card content.</p>
-        </div>
-    </div>
-    <div class="card">
-        <div class="img-container"><img src="/img/city1.jpg" alt=""></div>
-        <div class="card-content">
-            <h2>Card Title</h2>
-            <p>Card description 1 goes here. This is a brief description of the card content.</p>
-        </div>
-    </div>
-    <div class="card">
-        <div class="img-container"><img src="/img/city1.jpg" alt=""></div>
-        <div class="card-content">
-            <h2>Card Title</h2>
-            <p>Card description 1 goes here. This is a brief description of the card content.</p>
-        </div>
-    </div>
-    <div class="home-topic"> HISTORY </div> 
+    </div>     
+             </a>      
+      <% } %>
+    <% } else { %>
+    <div>{% empty %}</div>
+    <% } %> 
 </div>
 <!-- <div class="home-btn">SEARCH FOR OTHER MATERIALS</div> -->

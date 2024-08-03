@@ -7,9 +7,31 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     password: {
+        type: String,
+        required: true
+    },
+    searchHistory: [{
+        type: String,
+    }],
+    resourceHistory: 
+        [{ type: mongoose.Schema.Types.ObjectId, ref: 'Resource' } ],
+    bio: {
+        type: String,
+        default: ''
+    },
+    interests: {
+        type: [String],
+        default: []
+    },
+    securityQuestion: {
+        type: String,
+        required: true
+    },
+    securityAnswer: {
         type: String,
         required: true
     }

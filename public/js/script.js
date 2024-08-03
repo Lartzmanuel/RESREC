@@ -69,3 +69,87 @@
         close.style.display = 'none'; // Hide the close icon
         bar.style.display = 'block'; // Show the hamburger icon
     });
+
+        
+async function loadResources() {
+  try {
+    const response = await fetch('/udemy');
+    const data = await response.json();
+    // Handle the data, e.g., display resources
+  } catch (error) {
+    console.error('Failed to load resources:', error);
+  }
+} 
+
+    // To handle a resource click
+    async function handleResourceClick(event,resource) {
+    event.preventDefault()
+        try {
+            console.log(resource);
+            const response = await fetch('/click-resource', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...resource }),
+            });
+            console.log(response);
+            const data = await response.json();
+            if (response.ok) {
+            window.open(resource.link, '_blank');
+            } else {
+            console.error('Failed to handle resource click:', data.error);
+            }
+        } catch (error) {
+            console.error('Failed to handle resource click:', error);
+        }
+    }
+
+    const myModal = document.getElementById('myModal')
+    const logoutBtn = document.querySelectorAll('.logout');
+    const closebtn = document.getElementById('closebtn')
+    const yesBtn = document.getElementById('yesBtn')
+    const noBtn = document.getElementById('noBtn')
+
+
+    logoutBtn.forEach(logout => {
+        logout.addEventListener('click', (event)=> {
+            // event.preventDefault();
+            myModal.style.display = 'block';
+        })
+    })
+
+    //function that closes the modal
+    function closeModal() {
+        myModal.style.display = 'none'
+    }
+
+    closebtn.addEventListener('click', closeModal)
+    noBtn.addEventListener('click', closeModal)
+
+    window.onclick = (event) => {
+        if(event.target == myModal){
+            closeModal();
+        }
+    }
+
+
+
+    yesBtn.addEventListener('click', async (event) => {
+      event.preventDefault();
+      
+      try {
+          const response = await fetch('/logout', {
+              method: 'POST',
+          });
+  
+          if (response.ok) {
+              window.location.href = '/login';
+          } else {
+              console.error('Logout failed');
+          }
+      } catch (error) {
+          console.error('Error during logout:', error);
+      }
+  
+      closeModal();
+  });
+

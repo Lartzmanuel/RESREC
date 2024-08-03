@@ -1,0 +1,27 @@
+<div class="edit-profile-form">
+    <h1 class="align-center">Edit Profile</h1>
+    <form action="/editProfile" method="POST">
+        <div class="img-and-text">
+            <div class="edit-profile-img-container">
+                <img src="/img/profile-pic.jpg" alt="Profile Picture">
+            </div>
+            <p>Change your profile picture</p>
+        </div>
+
+        <div class="name-wrap">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name">
+        </div>
+        <div class="bio-wrap">
+            <label for="bio">Bio</label>
+            <textarea id="bio" name="bio" rows="4" cols="50"><%= user.bio %></textarea>
+        </div>
+        <div class="interest-wrap">
+            <label for="interests">Interests</label>
+            <textarea id="interests" name="interests" rows="4" cols="50"><%= user.interests %></textarea>
+        </div>
+        <div class="edit-profile-btn-container">
+            <button class="btn edit-profile-btn" type="submit">Save Changes</button>
+        </div>
+    </form>
+</div>

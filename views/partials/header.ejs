@@ -2,6 +2,16 @@
     <a href="/home" class="header__logo">RES<span>REC</span></a>
 
     <div class="nav-container">
+        <!-- <div class="profile-logo-1">
+            <a href="/userProfile">R</a>
+        </div> -->
+        <div class="profile-logo-1-container">
+            <a href="/userProfile">
+                <div class="profile-logo">
+                    <p>R</p>
+                </div>
+            </a>
+        </div>
         <div class="bars-container">
             <i class="fas fa-bars bar" aria-hidden="true"></i>
             <i class="fas fa-times close" aria-hidden="true" style="display: none;"></i>
@@ -18,11 +28,21 @@
                 <li>
                     <a href="/about">ABOUT</a>
                 </li>
-                <div class="profile">
-                    <a href="/views/userProfile">R</a>
-                </div>
+                <li>
+                    <a href="#" class="logout">LOGOUT</a>
+                </li>
             </ul>
         </nav>
+        <!-- <div class="profile-logo">
+            <a href="/userProfile">R</a>
+        </div> -->
+        <div class="profile-logo-container">
+            <a href="/userProfile">
+                <div class="profile-logo">
+                    <p>R</p>
+                </div>
+            </a>
+        </div>
     </div>
 </header>
 <div class="overlay-nav-container">
@@ -31,6 +51,22 @@
             <li><a href="/home">HOME</a></li>
             <li><a href="/preference">RECOMMENDER</a></li>
             <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" class="logout">LOGOUT</a></li>
         </ul>
     </nav>
+</div>
+<div class="modal" id="myModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <p>Logout</p>
+            <span id="closebtn" class="closeBtn">&times;</span>
+        </div> 
+
+        <p class="logtext">Do you want to Logout?</p>
+
+        <div class="buttons">
+            <button id="yesBtn" type="button">Yes</button>
+            <button id="noBtn" type="button">No</button>
+        </div>
+    </div>
 </div>

@@ -85,6 +85,59 @@ body {
     font-size: 11px;
   }
 
+  .dots-container{
+    display: none;
+  }
+
+  @media screen and (min-width: 500px){
+    .dots-container {
+      position: relative;
+      display: inline-block;
+  }
+  
+  .dots-icon {
+      font-size: 16px;
+      cursor: pointer;
+      color: white;
+  }
+  
+  .dropdown-menu {
+      display: none;
+      position: absolute;
+      border-radius: 8px;
+      right: 0;
+      background-color: rgba(6, 6, 6, 0.935);
+      min-width: 150px;
+      box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+  }
+  
+  .dropdown-menu.show {
+      display: block;
+  }
+  
+  .dropdown-menu ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      font-size: 13px;
+  }
+  
+  .dropdown-menu ul li {
+      padding: 8px 16px;
+  }
+  
+  .dropdown-menu ul li a {
+      color: #fff;
+      text-decoration: none;
+      display: block;
+  }
+  
+  .dropdown-menu ul li a:hover {
+      color: #b050e3;
+  }
+  
+  }
   /* FOOTER */
   .footer{
     text-align: center;

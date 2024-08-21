@@ -54,11 +54,19 @@ router.get('/home', checkAuthenticated,async (req, res)=> {
         title: "Home",
         description: "Home page"
     }
-    const userId= req.user.id;
-    const user = await User.findById(userId).populate('resourceHistory');
-    //console.log(user.resourceHistory);
-    res.render('home', {locals, resources: user.resourceHistory})
+    res.render('home', {locals})
 })
+
+// router.get('/home', checkAuthenticated,async (req, res)=> {
+//     const locals = {
+//         title: "Home",
+//         description: "Home page"
+//     }
+//     const userId= req.user.id;
+//     const user = await User.findById(userId).populate('resourceHistory');
+//     //console.log(user.resourceHistory);
+//     res.render('home', {locals, resources: user.resourceHistory})
+// })
 
 router.get('/userProfile', (req, res)=> {
     const locals = {
@@ -151,6 +159,18 @@ router.post('/reset_password', async (req, res) => {
         res.redirect('/reset_password');
     }
 });
+
+router.get('/history', async (req, res) => {
+    const locals = {
+        title: 'History',
+        description: 'History'
+    }
+
+    const userId= req.user.id;
+    const user = await User.findById(userId).populate('resourceHistory');
+
+    res.render('history', { locals, resources: user.resourceHistory})
+})
 
 router.get('/youtube', async (req, res)=> {
   const topic = req.session.topic;

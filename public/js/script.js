@@ -153,3 +153,15 @@ async function loadResources() {
       closeModal();
   });
 
+    const dotsIcon = document.querySelector('.dots-icon');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+
+    dotsIcon.addEventListener('click', function() {
+        dropdownMenu.classList.toggle('show');
+    });
+
+    window.addEventListener('click', function(event) {
+        if (!dotsIcon.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.classList.remove('show');
+        }
+    });

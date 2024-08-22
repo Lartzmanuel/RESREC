@@ -6,6 +6,7 @@ const {getUdemyCourse, getYoutubeVideo, getGoogleBooks} = require('../../public/
 const bcrypt = require('bcrypt')
 const bodyParser = require('body-parser');
 const User = require('../../model/users');
+const Feedback = require('../../model/feedback')
 router.use(bodyParser.urlencoded({ extended: true }));
 
 router.use(session({
@@ -170,6 +171,38 @@ router.get('/history', async (req, res) => {
     const user = await User.findById(userId).populate('resourceHistory');
 
     res.render('history', { locals, resources: user.resourceHistory})
+})
+
+router.get('/feedback', (req, res) => {
+    const locals = {
+        title: 'feedback',
+        description: 'feedback'
+    }
+    res.render('feedback', {locals})
+})
+
+router.post('/feedback', checkAuthenticated, async (req, res) => {
+
+    try{
+        const { subject, message } = req.body;
+
+        const newFeedback = new Feedback({
+            user: req.user.id,
+            subject,
+            message
+        });
+
+        await newFeedback.save();
+
+        console.log('Feedback saved to database')
+        req.flash('success_msg', 'Thank you for your feedback!');
+        res.redirect('/home');
+
+    } catch(err){
+        console.error(err);
+        req.flash('error_msg', 'An error occurred. Please try again.');
+        res.redirect('/feedback');
+    }
 })
 
 router.get('/youtube', async (req, res)=> {

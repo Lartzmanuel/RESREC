@@ -1,0 +1,23 @@
+<div class="feedback-wrapper">
+    <div class="feedback-container">
+        <form action="/feedback" method="POST">
+            <h1 class="align-center">Give us a feedback</h1> <% if (error_msg) { %>
+                <div class="alert alert-danger"><%= error_msg %></div>
+            <% } %>
+            <% if (success_msg) { %>
+                <div id="success-message" class="alert alert-success success-msg"><%= success_msg %></div>
+            <% } %>
+        <div class="input-container">
+            <label for="subject">Subject</label>
+            <input type="text" name="subject" id="subject"  placeholder="Enter subject" required>
+        </div>
+        <div class="input-container">
+            <label for="message">Message</label>
+            <textarea name="message" id="message" placeholder="Enter message"></textarea>
+        </div>
+        <div class="align-center">
+            <button class="btn feedback-btn" type="submit">Submit</button>
+        </div>
+        </form>
+    </div>
+</div>

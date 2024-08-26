@@ -126,11 +126,18 @@ app.post('/submit', checkAuthenticated, async (req, res) => {
    
    const userId = req.user.id; // Assume you have a way to get the current user's ID
     console.log(userId);
+    function capitalizeWords(topic) {
+      return topic.replace(/\b\w/g, char => char.toUpperCase());
+    }
+    const capitalizedTopic = capitalizeWords(req.session.topic);
     try {
       const user = await User.findById(userId);
       if (user) {
-        user.searchHistory.push(req.session.topic);
-        await user.save();
+        const topicExists = user.searchHistory.includes(capitalizedTopic);
+        if (!topicExists) {
+      user.searchHistory.push(req.session.topic);
+      await user.save();
+    }
         res.redirect(redirectUrl);
     } else {
         res.redirect(redirectUrl);
@@ -143,11 +150,30 @@ app.post('/submit', checkAuthenticated, async (req, res) => {
   });
 
   app.post('/click-resource', checkAuthenticated,async (req, res) => {
-    const { title, link, image, description } = req.body; 
+    const { courseId, title, link, image, description } = req.body; 
   
     try {
+
+      const userId = req.user.id; // Get the current user's ID
+      const courseId = Number(req.body.courseId); // or use String() if it's a string
+    // Find the user and check if the resource is already in their history
+    const user = await User.findById(userId).populate('resourceHistory');
+    // console.log(user);
+    // console.log(courseId);
+    // console.log('courseId:', courseId, 'Type:', typeof courseId);
+    // user.resourceHistory.forEach(resource => {
+    //   console.log('Stored resource courseId:', resource.courseId, 'Type:', typeof resource.courseId);
+    // })
+    const existingResource = user.resourceHistory.find(resource => resource.courseId === courseId);
+    console.log(existingResource);
+
+    if (existingResource) {
+      // Resource already accessed; redirect to the external link
+      return res.status(200).json({ message: 'Resource already accessed', redirectTo: link });
+  }
       // Create a new resource entry
       const newResource = new Resource({ 
+        courseId,
         title, 
         link,
         image,
@@ -156,7 +182,7 @@ app.post('/submit', checkAuthenticated, async (req, res) => {
       // Save the resource entry
       await newResource.save();
   
-   const userId = req.user.id; // Assume you have a way to get the current user's ID
+
 
       // Find the user and update their resource history
       await User.findByIdAndUpdate(userId, {

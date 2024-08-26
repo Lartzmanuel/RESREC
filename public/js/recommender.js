@@ -15,7 +15,7 @@ async function getUdemyCourse (topic) {
     const buffer = Buffer.from(credentials, 'utf-8')
     const base64Credentials = buffer.toString('base64')
     // console.log(base64Credentials);
-    const url = `https://www.udemy.com/api-2.0/courses/`;
+    const url = `https://www.udemy.com/api-2.0/courses/?fields[course]=title,headline,avg_rating,image_240x135,url,visible_instructors,num_reviews,price`;
     const headers = {  
       Authorization: `Basic ${base64Credentials}`,
       'Content-Type': 'application/json'
@@ -29,15 +29,25 @@ async function getUdemyCourse (topic) {
     const response = await axios.get(url, { headers, params });
 
     if (response.status === 200) {
-      const data = response.data;
-      console.log(data);
+      const data = response.data.results;
+      //get only the courses with reviews above 1000
+      const filteredCourses = data.filter(course => {
+        return course.num_reviews > 1000;
+      });
+      //sort the courses based on their ratings in descending order 
+      const sortedCourses = filteredCourses.sort((a, b) => {
+        return b.avg_rating - a.avg_rating;
+      });
+      console.log(sortedCourses);
       const courseData = [];
 
       console.log('----- Udemy Courses -----');
-      data.results.slice(0, 16).forEach((course) => {
+      sortedCourses.slice(0, 8).forEach((course) => {
+        const id = course.id;
         const title = course.title;
         const description = course.headline;
         const coursePicture = course.image_240x135;
+        const courseRating = course.avg_rating;
         const author = course.visible_instructors[0].title;
         const courseLink = "https://www.udemy.com"+course.url;
         
@@ -48,19 +58,23 @@ async function getUdemyCourse (topic) {
         }
 
         courseData.push({
+          Id: id,
           Title: title,
           Description: description,
           CoursePicture: coursePicture,
           Author: author,
+          Rating: courseRating,
           Price: price,
           CourseLink: courseLink,
         });
         console.log(`Title: ${title}`);
+        console.log(`Id: ${id}`);
         console.log(`Description: ${description}`);
         console.log(coursePicture);
         console.log(`Author: ${author}`);
         console.log(`Price: ${price}`);
         console.log(`CourseLink: ${courseLink}`);
+        console.log(`CourseRating: ${courseRating}`);
         console.log('-------------------------------------------');
       });
      //console.log(courseData);
@@ -123,8 +137,11 @@ const youtube = google.youtube({
     id: videoIds.join(','),
   });
 
-  const videos = videosResponse.data.items;
-  const sortedVideos = videos.sort((a, b) => b.statistics.likeCount - a.statistics.likeCount);
+ const videos = videosResponse.data.items;
+ const filteredVideos = videos.filter(course => {
+  return course.statistics.viewCount > 100000;
+});
+const sortedVideos = filteredVideos.sort((a, b) => b.statistics.viewCount - a.statistics.viewCount);
 const youtubeData = [];
   console.log('----- YouTube Videos -----');
   sortedVideos.forEach((video) => {
@@ -176,11 +193,17 @@ const response = await axios.get(API_URL, { params });
 
 const data = response.data;
 
+const sortedBooks = data.items.sort((a, b) => {
+  return b.volumeInfo.averageRating - a.volumeInfo.averageRating;
+});
+console.log(data);
+
 console.log('----- GOOGLE BOOKS -----');
-  data.items.forEach((item) => {
+  sortedBooks.forEach((item) => {
     const volumeInfo = item.volumeInfo;
     const title = volumeInfo.title || "Unknown Title";
     const authors = volumeInfo.authors ? volumeInfo.authors.join(", ") : "Unknown Author";
+    const rating = volumeInfo.averageRating || 0 ;
     const releaseDate = volumeInfo.publishedDate || "Unknown Date";
     const bookCover = volumeInfo.imageLinks ? volumeInfo.imageLinks.smallThumbnail : "No Cover";
     const description = volumeInfo.description || "No Description";
@@ -188,6 +211,7 @@ console.log('----- GOOGLE BOOKS -----');
     recommendations.push({
      Title: title,
      Author: authors,
+     Rating: rating,
      ReleaseDate: releaseDate,
      BookCover: bookCover,
      Description: description,
@@ -197,6 +221,7 @@ console.log('----- GOOGLE BOOKS -----');
         console.log(`Release Date: ${releaseDate}`);
         console.log(bookCover);
         console.log(`Author: ${authors}`);
+        console.log(`Rating: ${rating}`);
         console.log('-------------------------------------------');
 
   });

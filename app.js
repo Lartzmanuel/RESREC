@@ -175,74 +175,6 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 //       console.error(error);
 //       //res.status(500).json({ message: 'Error saving search query' });
 //     }
-   const userId = req.user.id; // Assume you have a way to get the current user's ID
-    console.log(userId);
-
-    function capitalizeWords(topic) {
-      return topic.replace(/\b\w/g, char => char.toUpperCase());
-    }
-    
-    const capitalizedTopic = capitalizeWords(req.session.topic);
-    try {
-      const user = await User.findById(userId);
-      if (user) {
-        const topicExists = user.searchHistory.includes(capitalizedTopic);
-        if (!topicExists) {
-      user.searchHistory.push(req.session.topic);
-      await user.save();
-    }
-        res.redirect(redirectUrl);
-    } else {
-        res.redirect(redirectUrl);
-      }
-    } catch (error) {
-      console.error(error);
-      //res.status(500).json({ message: 'Error saving search query' });
-    }
-  
-//   });
-
-// UPDATED ROUTE 1
-// app.post('/submit', checkAuthenticated, async (req, res) => {
-//   const { topic, resourceType, interest } = req.body;
-//   req.session.topic = topic;
-//   req.session.resourceType = resourceType;
-//   console.log(topic);
-  
-//   let redirectUrl;
-
-//   // Determine the redirect URL based on the resource type
-//   switch (resourceType) {
-//     case 'Udemy Courses':
-//       redirectUrl = '/udemy';
-//       break;
-//     case 'Youtube Videos':
-//       redirectUrl = '/youtube';
-//       break;
-//     default:
-//       redirectUrl = '/googleBooks';
-//   }
-
-//   const userId = req.user.id; // Assume req.user is populated with the logged-in user's data
-//   console.log(userId);
-
-//   try {
-//     const user = await User.findById(userId);
-//     if (user) {
-//       // Update the user's preferences
-//       user.preferences = { interest, resourceType, topic }; // Adjust based on your schema
-//       user.preferencesSet = true; // Mark preferences as set
-//       user.searchHistory.push(topic); // Save the search topic to history
-//       await user.save();
-//     }
-
-//     // Redirect based on the selected resource type
-//     res.redirect(redirectUrl);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send('Server Error');
-//   }
-// });
 
 // UPDATED ROUTE 2
 app.post('/submit', checkAuthenticated, async (req, res) => {
@@ -275,15 +207,30 @@ app.post('/submit', checkAuthenticated, async (req, res) => {
   const userId = req.user.id; // Assume req.user is populated with the logged-in user's data
   console.log("User ID:", userId); // Debugging statement
 
+  console.log(userId);
+
+  function capitalizeWords(topic) {
+    return topic.replace(/\b\w/g, char => char.toUpperCase());
+  }
+  
+  const capitalizedTopic = capitalizeWords(req.session.topic);
   try {
     const user = await User.findById(userId);
     if (user) {
       // Update the user's preferences
-      user.preferences = { interest, resourceType, topic }; // Adjust based on your schema
+      user.preferences = { interest, resourceType, capitalizedTopic }; // Adjust based on your schema
       user.preferencesSet = true; // Mark preferences as set
       
-      // Save the search topic to history
-      user.searchHistory.push(topic);
+      if (user) {
+        const topicExists = user.searchHistory.includes(capitalizedTopic);
+        if (!topicExists) {
+      user.searchHistory.push(req.session.topic);
+      await user.save();
+    }
+        res.redirect(redirectUrl);
+    } else {
+        res.redirect(redirectUrl);
+      }
 
       await user.save();
     }

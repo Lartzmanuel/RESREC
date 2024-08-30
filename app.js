@@ -61,11 +61,41 @@ app.get('/login', checkNotAuthenticated, (req, res) => {
     res.render('login', {locals})
 })
 
-app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-    successRedirect: '/home',
-    failureRedirect: '/login',
-    failureFlash: true
-}))
+//  ORIGINAL CODE
+// app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
+//     successRedirect: '/home',
+//     failureRedirect: '/login',
+//     failureFlash: true
+// }))
+
+// UPDATED TO ROUTE BASED NEW AND EXISTING USERS
+app.post('/login', checkNotAuthenticated, async (req, res, next) => {
+  passport.authenticate('local', async (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.redirect('/login');
+    }
+
+    req.logIn(user, async (err) => {
+      if (err) {
+        return next(err);
+      }
+
+      // Check if the user has set preferences
+      const foundUser = await User.findById(user._id);
+      if (!foundUser || !foundUser.preferencesSet) {
+        // User is new or hasn't set preferences yet
+        return res.redirect('/preference');
+      }
+
+      // User has set preferences, redirect to home
+      return res.redirect('/home');
+    });
+  })(req, res, next);
+});
+
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
     const locals = {
@@ -89,6 +119,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
             email: req.body.email,
             password: hashedPassword, securityQuestion,
             securityAnswer: hashedAnswer,
+            preferencesSet: false,
         });
 
         await user.save();
@@ -102,45 +133,140 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     }
 })
 
+// ORIGINAL CODE
+// app.post('/submit', checkAuthenticated, async (req, res) => {
 
-app.post('/submit', checkAuthenticated, async (req, res) => {
-
-    const topic = req.body.Topic;
-    const resourceType = req.body.resourceType;
-    req.session.topic = req.body.Topic;
-    console.log(topic);
-    req.session.resourceType = req.body.resourceType;
+//     const topic = req.body.Topic;
+//     const resourceType = req.body.resourceType;
+//     req.session.topic = req.body.Topic;
+//     console.log(topic);
+//     req.session.resourceType = req.body.resourceType;
   
-    let redirectUrl;
+//     let redirectUrl;
   
-    switch(resourceType) {
-      case 'Udemy Courses':
-        redirectUrl = '/udemy';
-        break;
-      case 'Youtube Videos':
-        redirectUrl = '/youtube';
-        break;
-      default:
-        redirectUrl = '/googleBooks';
-    }
+//     switch(resourceType) {
+//       case 'Udemy Courses':
+//         redirectUrl = '/udemy';
+//         break;
+//       case 'Youtube Videos':
+//         redirectUrl = '/youtube';
+//         break;
+//       default:
+//         redirectUrl = '/googleBooks';
+//     }
    
-   const userId = req.user.id; // Assume you have a way to get the current user's ID
-    console.log(userId);
-    try {
-      const user = await User.findById(userId);
-      if (user) {
-        user.searchHistory.push(req.session.topic);
-        await user.save();
-        res.redirect(redirectUrl);
-    } else {
-        res.redirect(redirectUrl);
-      }
-    } catch (error) {
-      console.error(error);
-      //res.status(500).json({ message: 'Error saving search query' });
-    }
+//    const userId = req.user.id; // Assume you have a way to get the current user's ID
+//     console.log(userId);
+//     try {
+//       const user = await User.findById(userId);
+//       if (user) {
+//         user.searchHistory.push(req.session.topic);
+//         await user.save();
+//         res.redirect(redirectUrl);
+//     } else {
+//         res.redirect(redirectUrl);
+//       }
+//     } catch (error) {
+//       console.error(error);
+//       //res.status(500).json({ message: 'Error saving search query' });
+//     }
   
-  });
+//   });
+
+// UPDATED ROUTE 1
+// app.post('/submit', checkAuthenticated, async (req, res) => {
+//   const { topic, resourceType, interest } = req.body;
+//   req.session.topic = topic;
+//   req.session.resourceType = resourceType;
+//   console.log(topic);
+  
+//   let redirectUrl;
+
+//   // Determine the redirect URL based on the resource type
+//   switch (resourceType) {
+//     case 'Udemy Courses':
+//       redirectUrl = '/udemy';
+//       break;
+//     case 'Youtube Videos':
+//       redirectUrl = '/youtube';
+//       break;
+//     default:
+//       redirectUrl = '/googleBooks';
+//   }
+
+//   const userId = req.user.id; // Assume req.user is populated with the logged-in user's data
+//   console.log(userId);
+
+//   try {
+//     const user = await User.findById(userId);
+//     if (user) {
+//       // Update the user's preferences
+//       user.preferences = { interest, resourceType, topic }; // Adjust based on your schema
+//       user.preferencesSet = true; // Mark preferences as set
+//       user.searchHistory.push(topic); // Save the search topic to history
+//       await user.save();
+//     }
+
+//     // Redirect based on the selected resource type
+//     res.redirect(redirectUrl);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Server Error');
+//   }
+// });
+
+// UPDATED ROUTE 2
+app.post('/submit', checkAuthenticated, async (req, res) => {
+  // Extract values from the form submission
+  const topic = req.body.Topic; // Use the original case as in your form
+  const resourceType = req.body.resourceType;
+  const interest = req.body.interest; // Assuming interest is now a field in the form
+  
+  // Set session variables as in the original code
+  req.session.topic = topic;
+  req.session.resourceType = resourceType;
+
+  console.log("Topic:", topic); // Debugging statement
+  console.log("Resource Type:", resourceType); // Debugging statement
+  
+  let redirectUrl;
+
+  // Determine the redirect URL based on the resource type
+  switch (resourceType) {
+    case 'Udemy Courses':
+      redirectUrl = '/udemy';
+      break;
+    case 'Youtube Videos':
+      redirectUrl = '/youtube';
+      break;
+    default:
+      redirectUrl = '/googleBooks';
+  }
+
+  const userId = req.user.id; // Assume req.user is populated with the logged-in user's data
+  console.log("User ID:", userId); // Debugging statement
+
+  try {
+    const user = await User.findById(userId);
+    if (user) {
+      // Update the user's preferences
+      user.preferences = { interest, resourceType, topic }; // Adjust based on your schema
+      user.preferencesSet = true; // Mark preferences as set
+      
+      // Save the search topic to history
+      user.searchHistory.push(topic);
+
+      await user.save();
+    }
+
+    // Redirect based on the selected resource type
+    res.redirect(redirectUrl);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server Error');
+  }
+});
+
 
   app.post('/click-resource', checkAuthenticated,async (req, res) => {
     const { title, link, image, description } = req.body; 

@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema({
     securityAnswer: {
         type: String,
         required: true
+    },
+    preferencesSet: {
+        type: Boolean,
+        default: false
     }
 })
 

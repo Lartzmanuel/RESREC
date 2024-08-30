@@ -1,5 +1,7 @@
 const { google } = require('googleapis');
 const axios = require('axios');
+const natural = require('natural');
+const cosineSimilarity = require('compute-cosine-similarity');
 require('dotenv').config
 
 
@@ -9,14 +11,146 @@ UDEMY_CLIENT_SECRET = process.env.UDEMY_CLIENT_SECRET;
 GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 API_URL = process.env.API_URL;
 
+//Getting the udemy courses
+async function getRecUdemyCourse(user) {
+  function extractFeatures(course) {
+    const text = `${course.title} ${course.headline}`;
+    const tokenizer = new natural.WordTokenizer();
+    const tokens = tokenizer.tokenize(text.toLowerCase());
+  
+    const tfidf = new natural.TfIdf();
+    tfidf.addDocument(tokens);
+  
+    const featureVector = [];
+    tfidf.listTerms(0).forEach(term => {
+      featureVector.push(term.tfidf);
+    });
+  
+    return { vector: featureVector };
+  }
+  
+  function normalizeVectors(vector1, vector2) {
+    const maxLength = Math.max(vector1.length, vector2.length);
+    const paddedVector1 = [...vector1, ...Array(maxLength - vector1.length).fill(0)];
+    const paddedVector2 = [...vector2, ...Array(maxLength - vector2.length).fill(0)];
+  
+    return [paddedVector1, paddedVector2];
+  }
+
+  function extractFeaturesFromUser(user) {
+    let combinedText = '';
+
+    // Get the latest three search history topics
+    const latestSearches = user.searchHistory.slice(-3);
+
+    // Combine the text from the latest searches
+    latestSearches.forEach(search => {
+      combinedText += ` ${search}`;
+    });
+  
+    const tokenizer = new natural.WordTokenizer();
+    const tokens = tokenizer.tokenize(combinedText.toLowerCase());
+  
+    const tfidf = new natural.TfIdf();
+    tfidf.addDocument(tokens);
+  
+    const featureVector = [];
+    tfidf.listTerms(0).forEach(term => {
+      featureVector.push(term.tfidf);
+    });
+  
+    return { vector: featureVector.length > 0 ? featureVector : [0] };
+  }
+
+  try {
+    const credentials = `${UDEMY_CLIENT_ID}:${UDEMY_CLIENT_SECRET}`;
+    const buffer = Buffer.from(credentials, 'utf-8');
+    const base64Credentials = buffer.toString('base64');
+    const url = `https://www.udemy.com/api-2.0/courses/?fields[course]=title,headline,avg_rating,image_240x135,url,visible_instructors,num_reviews,price`;
+    const headers = {
+      Authorization: `Basic ${base64Credentials}`,
+      'Content-Type': 'application/json'
+    };
+
+    const userCourseFeatures = extractFeaturesFromUser(user);
+
+    const recommendedCourses = [];    
+    const courseIds = new Set();
+
+
+    for (let search of user.searchHistory.slice(-3)) {
+      const params = {
+        search: search,
+        page: 1,
+        page_size: 100,
+      };
+
+      const response = await axios.get(url, { headers, params });
+
+      if (response.status === 200) {
+        const data = response.data.results;
+
+        // Filter out courses the user has already accessed
+        const filteredCourses = data.filter(course => {
+          return course.num_reviews > 5000 &&
+                 !user.resourceHistory.some(resource => resource.id === course.id);
+        });
+
+        // Apply content-based filtering
+        filteredCourses.forEach(course => {
+          const courseFeatures = extractFeatures(course);
+          const normalizedVectors = normalizeVectors(userCourseFeatures.vector, courseFeatures.vector);
+          const similarity = cosineSimilarity(normalizedVectors[0], normalizedVectors[1]);
+
+          // Check for duplicates
+          if (!courseIds.has(course.id)) {
+            recommendedCourses.push({
+              ...course,
+              similarity,
+            });
+            courseIds.add(course.id);
+          }
+        });
+      }
+    }
+
+    // Sort by similarity and rating
+    const sortedCourses = recommendedCourses.sort((a, b) => {
+      if (b.similarity !== a.similarity) {
+        return b.similarity - a.similarity;
+      } else {
+        return b.avg_rating - a.avg_rating;
+      }
+    });
+
+    const courseData = sortedCourses.slice(0, 8).map(course => ({
+      Id: course.id,
+      Title: course.title,
+      Description: course.headline,
+      CoursePicture: course.image_240x135,
+      Author: course.visible_instructors[0]?.title || 'Unknown',
+      Rating: course.avg_rating,
+      Price: course.price || 'Free',
+      CourseLink: `https://www.udemy.com${course.url}`,
+    }));
+
+    return courseData;
+  } catch (error) {
+    console.error(`Error fetching Udemy courses: ${error}`);
+    return null;
+  }
+}
+
+
 async function getUdemyCourse (topic) {
   try {
     const credentials = `${UDEMY_CLIENT_ID}:${UDEMY_CLIENT_SECRET}`;
     const buffer = Buffer.from(credentials, 'utf-8')
     const base64Credentials = buffer.toString('base64')
-    // console.log(base64Credentials);
+   console.log(base64Credentials);
     const url = `https://www.udemy.com/api-2.0/courses/?fields[course]=title,headline,avg_rating,image_240x135,url,visible_instructors,num_reviews,price`;
     const headers = {  
+      accept: "application/json",
       Authorization: `Basic ${base64Credentials}`,
       'Content-Type': 'application/json'
     };
@@ -80,12 +214,10 @@ async function getUdemyCourse (topic) {
      //console.log(courseData);
       return courseData;
     } else {
-      console.error(`API request failed: ${response.status}`);
-      return null;
+      console.error(`API request failed: ${response.status}`);      
     }
   } catch (error) {
     console.error(`Error fetching Udemy courses: ${error}`);
-    return null;
   }
 };
 
@@ -160,20 +292,11 @@ const youtubeData = [];
       Views: views,
       Duration: duration,
       VideoLink: videoLink,
-     Description: description,
+      Description: description,
       Picture: picture,
       Author: author,
      // CourseLink: courseLink,
     });
-
-    console.log(`Title: ${title}`);
-    console.log(`Rating: ${rating}`);
-    console.log(`Views: ${views}`);
-    console.log(`Picture: ${picture}`);
-    console.log(`Duration: ${duration}`);
-    console.log(`Description: ${description}`);
-    console.log(`Author: ${author}`);
-    console.log('-------------------------------------------');
   });
   console.log(youtubeData);
 return youtubeData;
@@ -217,12 +340,6 @@ console.log('----- GOOGLE BOOKS -----');
      Description: description,
      Link: link,
     });
-    console.log(`Title: ${title}`);
-        console.log(`Release Date: ${releaseDate}`);
-        console.log(bookCover);
-        console.log(`Author: ${authors}`);
-        console.log(`Rating: ${rating}`);
-        console.log('-------------------------------------------');
 
   });
 return recommendations;
@@ -230,6 +347,7 @@ return recommendations;
 
 
 module.exports = {
+    getRecUdemyCourse,
     getUdemyCourse,
     getYoutubeVideo,
     getGoogleBooks

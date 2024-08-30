@@ -62,7 +62,7 @@ app.get('/login', checkNotAuthenticated, (req, res) => {
 })
 
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-    successRedirect: '/home',
+    successRedirect: '/preference',
     failureRedirect: '/login',
     failureFlash: true
 }))
@@ -126,9 +126,11 @@ app.post('/submit', checkAuthenticated, async (req, res) => {
    
    const userId = req.user.id; // Assume you have a way to get the current user's ID
     console.log(userId);
+
     function capitalizeWords(topic) {
       return topic.replace(/\b\w/g, char => char.toUpperCase());
     }
+    
     const capitalizedTopic = capitalizeWords(req.session.topic);
     try {
       const user = await User.findById(userId);

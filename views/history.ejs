@@ -6,17 +6,17 @@
 </div>
 <div class="grid-container">
     <% if(resources.length) { %>
-        <% for(let data of resources) { %>
-        <a class="res-link" href="<%= data.link %>" target="_blank">
-                <div class="card">
-            <div class="img-container"><img src=" <%= data.image %> " alt=""></div>
-            <div class="card-content">
-            <h2><%= data.title %></h2>
-            <p><%= data.description %></p>
-        </div>
-    </div>     
-             </a>      
-      <% } %>
+       <% resources.slice(-5).reverse().forEach((data) => { %>
+        <a class="res-link" href="<%= data.link %>" target="_blank" onclick="handleResourceClick(event, {courseId: '<%= data.Id %>', title: '<%= data.Title %>', link: '<%= data.CourseLink %>', image: '<%= data.CoursePicture %>', description: '<%= data.Description %>'})">
+            <div class="card">
+                <div class="img-container"><img src=" <%= data.image %> " alt=""></div>
+                <div class="card-content">
+                    <h2><%= data.title %></h2>
+                    <p><%= data.description %></p>
+                </div>
+            </div>     
+        </a>      
+        <% }); %>
     <% } else { %>
     <div>{% empty %}</div>
     <% } %> 

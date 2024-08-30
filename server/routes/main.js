@@ -2,7 +2,7 @@
 const express = require('express')
 const router = express.Router()
 const session = require('express-session');
-const {getUdemyCourse, getYoutubeVideo, getGoogleBooks} = require('../../public/js/recommender');
+const {getRecUdemyCourse, getUdemyCourse, getYoutubeVideo, getGoogleBooks} = require('../../public/js/recommender');
 const bcrypt = require('bcrypt')
 const bodyParser = require('body-parser');
 const User = require('../../model/users');
@@ -50,24 +50,17 @@ router.get('/about', (req, res)=> {
     res.render('about', {locals})
 })
 
-router.get('/home', checkAuthenticated,async (req, res)=> {
+
+router.get('/home', checkAuthenticated, async (req, res)=> {
     const locals = {
         title: "Home",
         description: "Home page"
     }
-    res.render('home', {locals})
+    const userId= req.user.id;
+    const user = await User.findById(userId).populate('resourceHistory');
+    const RecCourseData = await getRecUdemyCourse(user);
+    res.render('home', {locals, RecCourseData})
 })
-
-// router.get('/home', checkAuthenticated,async (req, res)=> {
-//     const locals = {
-//         title: "Home",
-//         description: "Home page"
-//     }
-//     const userId= req.user.id;
-//     const user = await User.findById(userId).populate('resourceHistory');
-//     //console.log(user.resourceHistory);
-//     res.render('home', {locals, resources: user.resourceHistory})
-// })
 
 router.get('/userProfile', (req, res)=> {
     const locals = {
@@ -161,7 +154,7 @@ router.post('/reset_password', async (req, res) => {
     }
 });
 
-router.get('/history', async (req, res) => {
+router.get('/history', checkAuthenticated, async (req, res) => {
     const locals = {
         title: 'History',
         description: 'History'
@@ -226,8 +219,7 @@ router.get('/googleBooks', async (req, res)=> {
 })
 
 
-
-router.get('/udemy', async (req, res)=> {
+router.get('/udemy',  async (req, res)=> {
     const topic = req.session.topic;
     console.log(topic);
     const udemyCourseData = await getUdemyCourse(topic);
@@ -235,32 +227,8 @@ router.get('/udemy', async (req, res)=> {
         title: "Udemy Resource",
         description: "Udemy Resource page"
     }
-    res.render('udemy', {locals,udemyCourseData})
+    res.render('udemy', {locals, udemyCourseData})
 })
   
-
-
-// router.post('/submit', (req, res) => {
-//     const topic = req.body.Topic;
-//     const resourceType = req.body.resourceType;
-//     req.session.topic = req.body.Topic;
-//     console.log(topic);
-//     req.session.resourceType = req.body.resourceType;
-  
-//     let redirectUrl;
-  
-//     switch(resourceType) {
-//       case 'Udemy Courses':
-//         redirectUrl = '/udemy';
-//         break;
-//       case 'Youtube Videos':
-//         redirectUrl = '/youtube';
-//         break;
-//       default:
-//         redirectUrl = '/googleBooks';
-//     }
-  
-//     res.redirect(redirectUrl);
-//   });
 
 module.exports = router;

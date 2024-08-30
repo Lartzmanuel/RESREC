@@ -1,7 +1,13 @@
 const mongoose = require('mongoose')
 
 const resSchema = new mongoose.Schema({
-    title: {
+   courseId: {
+    type: Number,
+    required: true,
+    unique: true
+  },  
+  
+  title: {
         type: String,
         required: true
       },

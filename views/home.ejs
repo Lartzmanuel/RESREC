@@ -6,48 +6,26 @@
 </div>
 
 <div class="grid-container">
-    <div class="card">
-        <div class="img-container"><img src="/img/city1.jpg" alt=""></div>
-        <div class="card-content">
-            <h2>Card Title</h2>
-            <p>Card description 1 goes here. This is a brief description of the card content.</p>
+    <% if(RecCourseData.length) { %>
+        <% RecCourseData.slice(0, 12).forEach((data) => { %>
+        <a class="res-link" href="<%= data.CourseLink %>" target="_blank" onclick="handleResourceClick(event, {courseId: '<%= data.Id %>', title: '<%= data.Title %>', link: '<%= data.CourseLink %>', image: '<%= data.CoursePicture %>', description: '<%= data.Description %>'})">
+            <div class="card">
+                <div class="img-container"><img src=" <%= data.CoursePicture %> " alt=""></div>
+                <div class="card-content">
+                    <h2><%= data.Title %></h2>
+                    <p><%= data.Description %></p>
+                    <p>Rating:  <%= data.Rating.toFixed(1) %> </p>
+                </div>
+            </div>     
+        </a>      
+        <% }); %>
+    <% } else { %>
+        <div class="no-results">
+            <p>No results found. Please try a different search.</p>
+            <button onclick="window.location.href='/preference'">Search Again</button>
         </div>
-    </div>
-    <div class="card">
-        <div class="img-container"><img src="/img/city1.jpg" alt=""></div>
-        <div class="card-content">
-            <h2>Card Title</h2>
-            <p>Card description 1 goes here. This is a brief description of the card content.</p>
-        </div>
-    </div>
-    <div class="card">
-        <div class="img-container"><img src="/img/city1.jpg" alt=""></div>
-        <div class="card-content">
-            <h2>Card Title</h2>
-            <p>Card description 1 goes here. This is a brief description of the card content.</p>
-        </div>
-    </div>
-    <div class="card">
-        <div class="img-container"><img src="/img/city1.jpg" alt=""></div>
-        <div class="card-content">
-            <h2>Card Title</h2>
-            <p>Card description 1 goes here. This is a brief description of the card content.</p>
-        </div>
-    </div>
-    <div class="card">
-        <div class="img-container"><img src="/img/city1.jpg" alt=""></div>
-        <div class="card-content">
-            <h2>Card Title</h2>
-            <p>Card description 1 goes here. This is a brief description of the card content.</p>
-        </div>
-    </div>
-    <div class="card">
-        <div class="img-container"><img src="/img/city1.jpg" alt=""></div>
-        <div class="card-content">
-            <h2>Card Title</h2>
-            <p>Card description 1 goes here. This is a brief description of the card content.</p>
-        </div>
-    </div>
+    <% } %> 
 </div>
+
 
 
